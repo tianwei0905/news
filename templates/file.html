@@ -11,10 +11,11 @@
 	</style>
 <body>
  <div class="Page_Box">
- 	<div class="News_Title">{{ dc.title }}</div>
- 	<div class="News_Time">Time:{{ dc.created_time }}</div>
+ 	<div class="News_Title">{{ file.title }}</div>
+    <div >category:{{ file.category.name }}</div>
+ 	<div class="News_Time">Time:{{ file.created_time }}</div>
  	<div class="News_Content">
- 		{{ dc.content }}
+ 		{{ file.content }}
  	</div>
  </div>
 </body>

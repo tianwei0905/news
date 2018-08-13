@@ -15,7 +15,7 @@
             <h3>News List</h3>
                 <ul>
                     {% for item in news_list %}
-                   <li><a href="/files/{{ item.id }}">{{ item.title }}</a><span>{{ item.created_time }}</span></li>
+                   <li><a href="/files/helloshiyanlou">{{ item.title }}</a><span>{{ item.created_time }}</span></li>
                     {% endfor %}
                <ul>
     </body>
