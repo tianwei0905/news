@@ -3,11 +3,14 @@ from flask import Flask,render_template,abort
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
+from pymongo import MongoClient
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql://root@localhost:3306/shiyanlou'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
+client = MongoClient('127.0.0.1',27017)
+mdb = client.shiyanlou
 
 class File(db.Model):
     __tablename__ = 'file'
@@ -18,11 +21,32 @@ class File(db.Model):
     content = db.Column(db.Text)
     category = db.relationship('Category',
         backref=db.backref('files', lazy='dynamic'))
-    def __init__(self,title,created_time,category_id,content):
+    def __init__(self,title,created_time,category,content):
         self.title = title
         self.created_time = created_time
-        self.category_id = category_id
+        self.category = category
         self.content = content
+    def add_tag(self,tag_name):
+        list_now = mdb.tag.find_one({'id':self.id})
+        if list_now:
+            tags = list_now['tags']
+            if not tag_name in tags:
+                tags.append(tag_name)
+                mdb.tag.update_one({'id':self.id},{'$set':{'tags':tags}})
+        else:
+            mdb.tag.insert_one({'id':self.id,'tags':[tag_name]})
+    def remove_tag(self,tag_name):
+        list_now = mdb.tag.find_one({'id':self.id})
+        if list_now:
+            tags = list_now['tags']
+            if tag_name in tags:
+                tags.remove(tag_name)
+                mdb.tag.update_one({'id':self.id},{'$set':{'tags':tags}})
+    @property
+    def tags(self):
+        db_line = mdb.tag.find_one({'id',self})
+        tag_list = db_line['tages']
+        return tag_list
     def __repr__(self):
         return '<File %r>' % self.title
 
@@ -47,6 +71,7 @@ def index():
 @app.route('/files/<file_id>')
 def file(file_id):
     findfile = File.query.filter_by(id=file_id).first()
+    findtag = File.tags
     if findfile == None:
         abort(404)
     else:
