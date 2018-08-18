@@ -5,8 +5,8 @@
     </head>
     <style type="text/css">
     *{margin: 0;padding: 0;list-style: none}
-    .New_List{width: 500px;height: 100px;overflow: hidden;margin: 0 auto}
-    .New_List li{width: 500px;height: 30px;line-height: 30px;overflow: hidden;}
+    .New_List{width: 500px;overflow: hidden;margin: 0 auto}
+    .New_List li{width: 500px;overflow: hidden;}
     .New_List li a{float: left;}
     .New_List li span{float: right;}
     </style>
@@ -15,8 +15,15 @@
             <h3>News List</h3>
                 <ul>
                     {% for item in news_list %}
-                   <li><a href="/files/helloshiyanlou">{{ item.title }}</a><span>{{ item.created_time }}</span></li>
+                   <li>
+                        <a href="/files/{{ item.id }}">{{ item.title }}</a><span>{{ item.created_time }}</span>
+                        <ul>
+                            {% for tag in item.tags %}
+                            <li>{{ tag }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                     {% endfor %}
-               <ul>
+               </ul>
     </body>
 </html>

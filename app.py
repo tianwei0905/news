@@ -44,9 +44,8 @@ class File(db.Model):
                 mdb.tag.update_one({'id':self.id},{'$set':{'tags':tags}})
     @property
     def tags(self):
-        db_line = mdb.tag.find_one({'id',self})
-        tag_list = db_line['tages']
-        return tag_list
+        return mdb.tag.find_one({'id': self.id})['tags']
+#        return ['1','2']
     def __repr__(self):
         return '<File %r>' % self.title
 
@@ -71,7 +70,6 @@ def index():
 @app.route('/files/<file_id>')
 def file(file_id):
     findfile = File.query.filter_by(id=file_id).first()
-    findtag = File.tags
     if findfile == None:
         abort(404)
     else:
